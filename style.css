@@ -1,0 +1,66 @@
+body {
+    background-color: #bce4f8;
+    min-height: 98vh;
+    margin: 0;
+}
+
+p {
+    font-family: "Amatic SC", sans-serif;
+    font-weight: 700;
+}
+.wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin: 40px;
+}
+
+.wrapper__addTask{
+    min-width: 200px;
+}
+
+#input__task {
+    min-width: 100%;
+    min-height: 30px;
+    padding: 5px;
+    margin-bottom: 20px;
+    outline: none;
+    background: transparent;
+    border-radius: 10px;
+}
+
+.wrapper__addBtns {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper__addBtns button {
+    border-radius: 10px;
+    background: transparent;
+    margin-bottom: 10px;
+    height: 30px;
+    font-family: "Amatic SC", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.wrapper__tasks {
+    margin-top: 15px;
+    max-width: 70vh;
+    min-width: 30vh;
+}
+
+.wrapper__tasks p {
+    font-size: 35px;
+    margin: 0;
+}
+
+.wrapper__task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.wrapper__delete {
+
+}

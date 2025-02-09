@@ -30,7 +30,6 @@ function renderTask() {
                                                                 <p class="task__descr">${task.desc}</p>
                                                                 <button class='delete__btn'>Delete</button>
                                                             </div>`)
-
             } else if(task.priority === 0) {
                 addNewTask(task);
     

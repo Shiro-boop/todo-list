@@ -111,7 +111,7 @@ main {
     flex-wrap: wrap;
     gap: 20px;
     height: 30px;
-    margin-bottom: 10px;
+    margin-bottom: 10px;;
 }
 
 .task p {
@@ -159,4 +159,30 @@ main {
     
 }
 
+/* Адаптивность */
 
+@media (max-width: 792px) {
+    main {
+        padding: 40px 10px 40px 10px;
+    }
+
+    .input__task {
+        width: 300px;
+    }
+
+    .add__task {
+        width: 300px;
+    }
+    
+    .task__btns {
+        min-width: 120px;
+    }
+
+    .task p {
+        font-size: 15px;
+    }
+
+    .delete__btn {
+        width: 80px;
+    }
+}

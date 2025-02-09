@@ -1,23 +1,43 @@
 'use strict'
 
-let deleteTask,
-    checkboxTask;
+
 const inputTask = document.querySelector('.input__task'),
       addTask = document.querySelector('.add__task'),
       tasks = document.querySelector('.tasks'),
       successTask = document.querySelector('.success__task');
 
 // Перед началом работы, проверяю есть в хранилище данные, и добавляю их на сайт
+
 if (localStorage.length > 0) {
     for(let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if(JSON.parse(localStorage.getItem(key)).completed) {
+        const taskData = JSON.parse(localStorage.getItem(key));
+
+        if(taskData.completed) {
             successTask.insertAdjacentHTML('beforeend', `<div data-id=${key}  class="task">
-                                                        <p class="task__descr">${JSON.parse(localStorage.getItem(key)).desc}</p>
-                                                        <button class='delete__btn'>Delete</button>
-                                                    </div>`)
+                                                            <p class="task__descr">${JSON.parse(localStorage.getItem(key)).desc}</p>
+                                                            <button class='delete__btn'>Delete</button>
+                                                        </div>`)
         } else {
-            addNewTask(JSON.parse(localStorage.getItem(key)));
+
+            if(taskData.priority === 0) {
+                addNewTask(taskData);
+
+            } else if(taskData.priority === 1) {
+                addNewTask(taskData);
+                let insertedTask = document.querySelector(`.task[data-id="${key}"]`)
+                let priorityBtn = insertedTask.children[1].children[0];
+
+                priorityBtn.style.background = 'yellow'
+                insertedTask.style.background = 'yellow'
+            } else if(taskData.priority === 2){
+                addNewTask(taskData);
+                let insertedTask = document.querySelector(`.task[data-id="${key}"]`);
+                let priorityBtn = insertedTask.children[1].children[0];
+
+                priorityBtn.style.display = 'none'
+                insertedTask.style.background = 'red'
+            }
         }
     }
 }
@@ -27,9 +47,10 @@ if (localStorage.length > 0) {
 // Функция создания объекта задачи
 class Task {
     constructor(task) {
-        this.desc = task
-        this.id = Date.now()
-        this.completed = false
+        this.desc = task,
+        this.id = Date.now(),
+        this.completed = false,
+        this.priority = 0
     }
 }
 
@@ -37,8 +58,11 @@ class Task {
 function addNewTask(task) {
     tasks.insertAdjacentHTML('beforeend', `<div data-id=${task.id}  class="task">
                                                 <p class="task__descr">${task.desc}</p>
-                                                <button class='delete__btn'>Delete</button>
-                                                <input class='checkbox__task' type="checkbox">
+                                                <div class='task__btns'>
+                                                    <button class='priority__btn'>↑</button>
+                                                    <button class='delete__btn'>Delete</button>
+                                                    <input class='checkbox__task' type="checkbox">
+                                                </div>
                                             </div>`)
 
     localStorage.setItem(task.id, JSON.stringify(task));
@@ -128,15 +152,46 @@ tasks.addEventListener('click', (e) => {
 
     // Выполение задачи
     if(e.target.classList.contains('checkbox__task')) {
-        const taskElement = e.target.closest('.task')
+        const taskElement = e.target.closest('.task');
         const taskId = taskElement.dataset.id;
-        const completedTask = JSON.parse(localStorage.getItem(taskId));
-
+        const priorityBtn = taskElement.children[1].children[0]; // Получаю кнопку приоритета
+        
+        const completedTask = JSON.parse(localStorage.getItem(taskId)); // Перезаписываю задачу в localStorage, помечая ее выполненной
         completedTask.completed = true
         localStorage.setItem(taskId, JSON.stringify(completedTask));
 
+        taskElement.style.background = 'white'; // Сбрасываю цвет приотетов
+        priorityBtn.style.display = 'none'; // Скрываю кнопку приоритета
         e.target.style.display = 'none'; // Скрываем чекбокс
         successTask.prepend(taskElement);
+    }
+
+    // Повышение приоритета задачи
+    if(e.target.classList.contains('priority__btn')) {
+        const taskElement = e.target.closest('.task')
+        const priorityBtn = taskElement.children[1].children[0];
+        const taskId = taskElement.dataset.id
+
+        if(taskElement.style.background === 'yellow') {
+            taskElement.style.background = 'red' // Изменяю стили
+            priorityBtn.style.background = 'red';
+            priorityBtn.style.display = 'none'
+
+            let priorityTask = JSON.parse(localStorage.getItem(taskId)); // Перезаписываю в localStorage задачу с новым приоритетом
+            priorityTask.priority = 2;
+            localStorage.setItem(taskId, JSON.stringify(priorityTask))
+
+
+        } else {
+            taskElement.style.background = 'yellow'; // Изменяю стили
+            priorityBtn.style.background = 'yellow';
+
+            let priorityTask = JSON.parse(localStorage.getItem(taskId)); // Перезаписываю в localStorage задачу с новым приоритетом
+            priorityTask.priority = 1;
+            localStorage.setItem(taskId, JSON.stringify(priorityTask))
+
+
+        }
     }
 })
 

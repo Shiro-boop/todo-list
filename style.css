@@ -91,7 +91,7 @@ main {
     margin-bottom: 20px;
 }
 
-.tasks__title {
+/* .tasks__title {
     font-family: "Noto Sans", serif;
     margin-bottom: 10px;
 }
@@ -99,7 +99,7 @@ main {
 .success__title {
     font-family: "Noto Sans", serif;
     margin-bottom: 10px;
-}
+} */
 
 .task {
     border: 1px solid #000;

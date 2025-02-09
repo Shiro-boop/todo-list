@@ -7,50 +7,50 @@ const inputTask = document.querySelector('.input__task'),
       successTask = document.querySelector('.success__task');
 
 // Перед началом работы, проверяю есть в хранилище данные, и добавляю их на сайт
+renderTask();
 
-if (localStorage.length > 0) {
-    for(let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const taskData = JSON.parse(localStorage.getItem(key));
 
-        if(taskData.completed) {
-            successTask.insertAdjacentHTML('beforeend', `<div data-id=${key}  class="task">
-                                                            <p class="task__descr">${JSON.parse(localStorage.getItem(key)).desc}</p>
-                                                            <button class='delete__btn'>Delete</button>
-                                                        </div>`)
-        } else {
+function renderTask() {
+    if(localStorage.length > 0) {
+        tasks.innerHTML = ''; // Очистка задач
+        successTask.innerHTML = ''; // Очистка выполненных задач
+    
+        let array = [] // Получаю из localStorage массив объектов
+        for(let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            array.push(JSON.parse(localStorage.getItem(key)))
+        };
 
-            if(taskData.priority === 0) {
-                addNewTask(taskData);
+        array.sort((a,b) => b.priority - a.priority) // Сортирую задачи по приоритету
 
-            } else if(taskData.priority === 1) {
-                addNewTask(taskData);
-                let insertedTask = document.querySelector(`.task[data-id="${key}"]`)
+        array.forEach(task => {
+            if(task.completed) {
+                task.priority = 0;
+                successTask.insertAdjacentHTML('beforeend', `<div data-id=${task.id}  class="task">
+                                                                <p class="task__descr">${task.desc}</p>
+                                                                <button class='delete__btn'>Delete</button>
+                                                            </div>`)
+
+            } else if(task.priority === 0) {
+                addNewTask(task);
+    
+            } else if(task.priority === 1) {
+                addNewTask(task);
+                let insertedTask = document.querySelector(`.task[data-id="${task.id}"]`)
                 let priorityBtn = insertedTask.children[1].children[0];
 
-                priorityBtn.style.background = 'yellow'
-                insertedTask.style.background = 'yellow'
-            } else if(taskData.priority === 2){
-                addNewTask(taskData);
-                let insertedTask = document.querySelector(`.task[data-id="${key}"]`);
+                priorityBtn.style.background = 'yellow';
+                insertedTask.style.background = 'yellow';
+
+            } else if(task.priority === 2){
+                addNewTask(task);
+                let insertedTask = document.querySelector(`.task[data-id="${task.id}"]`);
                 let priorityBtn = insertedTask.children[1].children[0];
 
                 priorityBtn.style.display = 'none'
                 insertedTask.style.background = 'red'
             }
-        }
-    }
-}
-
-
-
-// Функция создания объекта задачи
-class Task {
-    constructor(task) {
-        this.desc = task,
-        this.id = Date.now(),
-        this.completed = false,
-        this.priority = 0
+        })
     }
 }
 
@@ -68,7 +68,15 @@ function addNewTask(task) {
     localStorage.setItem(task.id, JSON.stringify(task));
 }
 
-
+// Функция создания объекта задачи
+class Task {
+    constructor(task) {
+        this.desc = task,
+        this.id = Date.now(),
+        this.completed = false,
+        this.priority = 0
+    }
+}
 
 // Добавление задачи
 addTask.addEventListener('click', (e) => {
@@ -79,65 +87,7 @@ addTask.addEventListener('click', (e) => {
         addNewTask(new Task(inputTask.value)); // Cоздаю при вызове функции новый объект, передавая туда значение input
         inputTask.value = '';
     }
-
-    // Удаление задачи
-    // Каждый раз при добавлении задачи на коллекцию вешается forEach, который вешает событие на каждую кнопку
-    // deleteTask.forEach(button => {
-    //     button.addEventListener('click', e => {
-    //         button.parentElement.remove(); // Удаляет задачу полностью
-    //     })
-    // })
-
-
-    // Выполнение задачи и ее перемещение в список выполненных задач
-    // checkboxTask.forEach(item => {
-    //     item.addEventListener('click', e => {
-    //         item.parentElement.lastElementChild.style.display = 'none' // Перемещаюсь к родителю, после к чекбоксу и убираю его
-    //         successTask.prepend(item.parentElement);
-    //     })
-    // })
-
 });
-
-// То же самое добавление и удаление задачи
-// // Дублирую код, но для возможности отправки задачи по нажатию клавиши Enter
-// inputTask.addEventListener('keyup', e => {
-//     if (e.keyCode === 13) {
-//         // Проверка данных на пустую строку
-//         if (inputTask.value === '') {
-//             alert('Пожалуйста, введите данные')
-//         } else {
-//             tasks.insertAdjacentHTML('beforeend', `<div class="task">
-//                                                     <p>${inputTask.value}</p>
-//                                                     <button class='delete__btn'>Delete</button>
-//                                                     <input class='checkbox__task' type="checkbox">
-//                                                    </div>`)
-//             inputTask.value = ''; // Очищаю значение инпута после добавления задачи
-//             deleteTask = document.querySelectorAll('.delete__btn'); // Обновляю коллекцию, чтобы события корректно привязывались к каждой кнопке
-//             checkboxTask = document.querySelectorAll('.checkbox__task');
-//         }
-
-
-
-//             // Удаление задачи
-//             // Каждый раз при добавлении задачи на коллекцию вешается forEach, который вешает событие на каждую кнопку
-//             deleteTask.forEach(button => {
-//                 button.addEventListener('click', e => {
-//                     button.parentElement.remove(); // Удаляет задачу полностью
-//                 })
-//             })
-
-            
-//             // Выполнение задачи и ее перемещение в список выполненных задач
-//             checkboxTask.forEach(item => {
-//                 item.addEventListener('click', e => {
-//                     item.parentElement.lastElementChild.style.display = 'none' // Перемещаюсь к родителю, после к чекбоксу и убираю его
-//                     successTask.prepend(item.parentElement);
-//                 })
-//             })
-//     }
-// })
-
 
 
 tasks.addEventListener('click', (e) => {
@@ -158,11 +108,12 @@ tasks.addEventListener('click', (e) => {
         
         const completedTask = JSON.parse(localStorage.getItem(taskId)); // Перезаписываю задачу в localStorage, помечая ее выполненной
         completedTask.completed = true
+        completedTask.priority = 0
         localStorage.setItem(taskId, JSON.stringify(completedTask));
 
-        taskElement.style.background = 'white'; // Сбрасываю цвет приотетов
+        taskElement.style.background = 'white'; // Сбрасываю цвет приоритетов
         priorityBtn.style.display = 'none'; // Скрываю кнопку приоритета
-        e.target.style.display = 'none'; // Скрываем чекбокс
+        e.target.style.display = 'none'; // Скрываю чекбокс
         successTask.prepend(taskElement);
     }
 
@@ -180,7 +131,7 @@ tasks.addEventListener('click', (e) => {
             let priorityTask = JSON.parse(localStorage.getItem(taskId)); // Перезаписываю в localStorage задачу с новым приоритетом
             priorityTask.priority = 2;
             localStorage.setItem(taskId, JSON.stringify(priorityTask))
-
+            renderTask()
 
         } else {
             taskElement.style.background = 'yellow'; // Изменяю стили
@@ -189,7 +140,7 @@ tasks.addEventListener('click', (e) => {
             let priorityTask = JSON.parse(localStorage.getItem(taskId)); // Перезаписываю в localStorage задачу с новым приоритетом
             priorityTask.priority = 1;
             localStorage.setItem(taskId, JSON.stringify(priorityTask))
-
+            renderTask()
 
         }
     }
